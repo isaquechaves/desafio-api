@@ -7,9 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "tb_produto")
@@ -23,7 +27,7 @@ public class Produto {
 	private String nome;
 	
 	@NotNull
-	private String codigoProduto;
+	private String codigo_produto;
 	
 	@NotNull
 	private BigDecimal valor;
@@ -32,7 +36,7 @@ public class Produto {
 	private Boolean promocao;
 	
 	@NotNull
-	private BigDecimal valorPromo;
+	private BigDecimal valor_promo;
 	
 	@NotNull
 	private String categoria;
@@ -42,11 +46,14 @@ public class Produto {
 	
 	@NotNull
 	private Long quantidade;
+		
+	@JsonBackReference
+	@ManyToOne
+	@JoinColumn(name = "fornecedor_id")
+	private Fornecedor fornecedor;
 	
-	@ManyToMany(mappedBy = "produtos")
-	private List<Fornecedor> fornecedor;
 	
-	@ManyToMany(mappedBy = "vendas")
+	@ManyToMany(mappedBy = "produto")
 	private List<Venda> vendas;
 	
 	public Long getId() {
@@ -65,12 +72,12 @@ public class Produto {
 		this.nome = nome;
 	}
 
-	public String getCodigoProduto() {
-		return codigoProduto;
+	public String getCodigo_produto() {
+		return codigo_produto;
 	}
 
-	public void setCodigoProduto(String codigoProduto) {
-		this.codigoProduto = codigoProduto;
+	public void setCodigo_produto(String codigo_produto) {
+		this.codigo_produto = codigo_produto;
 	}
 
 	public BigDecimal getValor() {
@@ -89,12 +96,12 @@ public class Produto {
 		this.promocao = promocao;
 	}
 
-	public BigDecimal getValorPromo() {
-		return valorPromo;
+	public BigDecimal getValor_promo() {
+		return valor_promo;
 	}
 
-	public void setValorPromo(BigDecimal valorPromo) {
-		this.valorPromo = valorPromo;
+	public void setValor_promo(BigDecimal valor_promo) {
+		this.valor_promo = valor_promo;
 	}
 
 	public String getCategoria() {
@@ -121,11 +128,11 @@ public class Produto {
 		this.quantidade = quantidade;
 	}
 
-	public List<Fornecedor> getFornecedor() {
+	public Fornecedor getFornecedor() {
 		return fornecedor;
 	}
 
-	public void setFornecedor(List<Fornecedor> fornecedor) {
+	public void setFornecedor(Fornecedor fornecedor) {
 		this.fornecedor = fornecedor;
 	}
 	

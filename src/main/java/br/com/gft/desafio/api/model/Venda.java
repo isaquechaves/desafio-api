@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -22,7 +23,7 @@ public class Venda {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@ManyToMany
+	@ManyToOne
 	@JoinTable(name = "tb_fornecedor",
 		joinColumns = @JoinColumn(name = "venda_id"),
 		inverseJoinColumns = @JoinColumn(name = "fornecedor_id"))
@@ -38,7 +39,7 @@ public class Venda {
 	@JoinTable(name = "tb_venda_produto",
 			joinColumns = @JoinColumn(name = "venda_id"),
 			inverseJoinColumns = @JoinColumn(name = "produto_id"))
-	private List<Produto> produtos;
+	private List<Produto> produto;
 	
 	@NotNull
 	private BigDecimal totalCompras;
@@ -70,12 +71,12 @@ public class Venda {
 		this.cliente = cliente;
 	}
 
-	public List<Produto> getProdutos() {
-		return produtos;
+	public List<Produto> getProduto() {
+		return produto;
 	}
 
-	public void setProdutos(List<Produto> produtos) {
-		this.produtos = produtos;
+	public void setProdutos(List<Produto> produto) {
+		this.produto = produto;
 	}
 
 	public BigDecimal getTotalCompras() {
