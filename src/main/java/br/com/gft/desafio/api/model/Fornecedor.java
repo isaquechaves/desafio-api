@@ -9,9 +9,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
@@ -34,6 +36,18 @@ public class Fornecedor {
 	@JoinColumn(name = "fornecedor_id")
 	private List<Produto> produtos;
 
+	@JsonBackReference
+	@OneToOne
+	@JoinColumn(name = "fornecedor_id")
+	private Venda venda;
+	
+	public Venda getVendas() {
+		return venda;
+	}
+
+	public void setVendas(Venda venda) {
+		this.venda = venda;
+	}
 
 	public Long getId() {
 		return id;

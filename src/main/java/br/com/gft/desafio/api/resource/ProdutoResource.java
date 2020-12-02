@@ -37,11 +37,19 @@ public class ProdutoResource {
 		return produtoRepository.findAll();
 	}
 	
-	@GetMapping("/abc")
+	@GetMapping("/asc")
 	public List<Produto> listarAlpha(){
-		List<Produto> produtos = produtoRepository.findAll(Sort.by("nome").ascending());
-		
-		return produtos;
+		return produtoRepository.findAll(Sort.by("nome").ascending());
+	}
+	
+	@GetMapping("/desc")
+	public List<Produto> listarDesc(){
+		return produtoRepository.findAll(Sort.by("nome").descending()); 
+	}
+	
+	@GetMapping("/nome/{nome}")
+	public List<Produto> buscarPeloNome(@PathVariable String nome){
+		return produtoRepository.findByNomeContaining(nome);	 
 	}
 	
 	@PostMapping
