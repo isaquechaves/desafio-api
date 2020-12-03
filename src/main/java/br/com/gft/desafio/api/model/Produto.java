@@ -1,17 +1,20 @@
 package br.com.gft.desafio.api.model;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "tb_produto")
@@ -45,24 +48,17 @@ public class Produto {
 	@NotNull
 	private Long quantidade;
 		
-	@JsonBackReference
+	
+	
+	@JsonManagedReference
 	@ManyToOne
 	@JoinColumn(name = "fornecedor_id")
 	private Fornecedor fornecedor;
 	
 	@JsonBackReference
-	@ManyToOne
-	@JoinColumn(name = "produto_id")
-	private Venda vendas;
+	@ManyToMany(mappedBy = "produtos")
+	private List<Venda> vendas;
 	
-	
-	public Venda getVendas() {
-		return vendas;
-	}
-
-	public void setVendas(Venda vendas) {
-		this.vendas = vendas;
-	}
 
 	public Long getId() {
 		return id;

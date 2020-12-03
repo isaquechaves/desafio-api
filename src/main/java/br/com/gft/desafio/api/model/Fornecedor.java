@@ -3,18 +3,15 @@ package br.com.gft.desafio.api.model;
 import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity
@@ -31,28 +28,13 @@ public class Fornecedor {
 	@NotNull
 	private String cnpj;
 	
-	@JsonManagedReference
-	@OneToMany(fetch = FetchType.LAZY)
+	
+	@OneToMany
 	@JoinColumn(name = "fornecedor_id")
+	@JsonBackReference
 	private List<Produto> produtos;
 
-	@JsonBackReference
-	@OneToOne
-	@JoinColumn(name = "fornecedor_id")
-	private Venda venda;
 	
-	public Venda getVendas() {
-		return venda;
-	}
-
-	public void setVendas(Venda venda) {
-		this.venda = venda;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
 	public void setId(Long id) {
 		this.id = id;
 	}

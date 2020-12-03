@@ -6,14 +6,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
@@ -41,18 +38,6 @@ public class Cliente {
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate data_cadastro;
 	
-	@JsonBackReference
-	@OneToOne
-	@JoinColumn(name = "cliente_id")
-	private Venda venda;
-	
-	public Venda getVendas() {
-		return venda;
-	}
-
-	public void setVendas(Venda vendas) {
-		this.venda = vendas;
-	}
 
 	public Long getId() {
 		return id;
