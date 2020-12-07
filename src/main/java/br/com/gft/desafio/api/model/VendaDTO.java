@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class VendaDTO {
@@ -12,15 +14,16 @@ public class VendaDTO {
 	private Long id;
 	
 	@NotNull
-	private Long fornecedor;
+	private Fornecedor fornecedor;
 	
 	@NotNull
-	private Long cliente;
+	private Cliente cliente;
 	
 	@NotNull
-	private List<Long> produtos;
+	private List<Produto> produtos;
 	
 	@NotNull
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate dataCompra;
 
@@ -28,15 +31,15 @@ public class VendaDTO {
 		return id;
 	}
 
-	public Long getFornecedor() {
+	public Fornecedor getFornecedor() {
 		return fornecedor;
 	}
 
-	public Long getCliente() {
+	public Cliente getCliente() {
 		return cliente;
 	}
 
-	public List<Long> getProdutos() {
+	public List<Produto> getProdutos() {
 		return produtos;
 	}
 
@@ -49,15 +52,15 @@ public class VendaDTO {
 		this.id = id;
 	}
 
-	public void setFornecedor(Long fornecedor) {
+	public void setFornecedor(Fornecedor fornecedor) {
 		this.fornecedor = fornecedor;
 	}
 
-	public void setCliente(Long cliente) {
+	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
 	}
 
-	public void setProdutos(List<Long> produtos) {
+	public void setProdutos(List<Produto> produtos) {
 		this.produtos = produtos;
 	}
 

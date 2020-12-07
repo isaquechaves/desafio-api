@@ -19,22 +19,30 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import io.swagger.annotations.ApiModelProperty;
+
 @Entity
 @Table(name="tb_venda")
 public class Venda {
-
+	
+	@ApiModelProperty(value = "Código", example = "1")
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@ApiModelProperty(value = "Código do fornecedor", example = "1")
+	@NotNull
 	@OneToOne
 	@JoinColumn(name = "fornecedor_id")
 	private Fornecedor fornecedor;
 	
+	@ApiModelProperty(value = "Código do cliente", example = "1")
+	@NotNull
 	@OneToOne
 	@JoinColumn(name = "cliente_id")
 	private Cliente cliente;
 	
+	@ApiModelProperty(value = "Lista de códigos dos produtos", example = "[1, 2, 3]")
 	@NotNull
 	@ManyToMany
 	@JoinTable(name = "tb_venda_produto",
@@ -43,9 +51,11 @@ public class Venda {
 	@JsonManagedReference
 	private List<Produto> produtos;
 	
+	@ApiModelProperty(example = "5000.50")
 	@Column(name="totalcompra")
 	private BigDecimal totalCompra;
 	
+	@ApiModelProperty(example = "01/01/2020")
 	@NotNull
 	@Column(name="datacompra")
 	@JsonFormat(pattern = "dd/MM/yyyy")

@@ -30,5 +30,17 @@ public class ProdutoService {
 		}
 	}
 	
+	public void produtoAtualizarQuantidade(Produto produto) {
+		produto.setQuantidade(produto.getQuantidade()-1);
+		produtoRepository.save(produto);
+	}
 	
+	public void criarProdutoCodigo(Produto produto) {
+		String nome = produto.getNome().substring(0, 3);
+		
+		String codigo = produto.getId().toString().concat(nome);
+		
+		produto.setCodigoProduto(codigo);
+		produtoRepository.save(produto);
+	}
 }

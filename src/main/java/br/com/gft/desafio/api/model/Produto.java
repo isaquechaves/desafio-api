@@ -3,6 +3,7 @@ package br.com.gft.desafio.api.model;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,51 +12,62 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import io.swagger.annotations.ApiModelProperty;
 
 @Entity
 @Table(name = "tb_produto")
 public class Produto {
-
+	
+	@ApiModelProperty(value = "Código", example = "1")
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotNull
+	@ApiModelProperty(example = "Livro")
+	@NotBlank
+	@Size(min = 3, max = 50)
 	private String nome;
 	
-	@NotNull
-	private String codigo_produto;
+	@ApiModelProperty(example = "1")
+	@Column(name = "codigoproduto")
+	private String codigoProduto;
 	
+	@ApiModelProperty(example = "10.5")
 	@NotNull
 	private BigDecimal valor;
 	
+	@ApiModelProperty(example = "true ou false")
 	@NotNull
 	private Boolean promocao;
 	
+	@ApiModelProperty(example = "5.50")
 	@NotNull
-	private BigDecimal valor_promo;
+	@Column(name = "valorpromo")
+	private BigDecimal valorPromo;
 	
-	@NotNull
+	@ApiModelProperty(example = "Livros")
+	@NotBlank
 	private String categoria;
 	
-	@NotNull
+	@ApiModelProperty(example = "imagem.jpg")
+	@NotBlank
 	private String imagem;
 	
+	@ApiModelProperty(example = "1")
 	@NotNull
 	private Long quantidade;
 		
-	
-	
-	@JsonManagedReference
+	@ApiModelProperty(value = "Código do fornecedor", example = "1")
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name = "fornecedor_id")
 	private Fornecedor fornecedor;
 	
-	@JsonBackReference
+	
 	@ManyToMany(mappedBy = "produtos")
 	private List<Venda> vendas;
 	
@@ -76,12 +88,12 @@ public class Produto {
 		this.nome = nome;
 	}
 
-	public String getCodigo_produto() {
-		return codigo_produto;
+	public String getCodigoProduto() {
+		return codigoProduto;
 	}
 
-	public void setCodigo_produto(String codigo_produto) {
-		this.codigo_produto = codigo_produto;
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
 	}
 
 	public BigDecimal getValor() {
@@ -100,12 +112,12 @@ public class Produto {
 		this.promocao = promocao;
 	}
 
-	public BigDecimal getValor_promo() {
-		return valor_promo;
+	public BigDecimal getValorPromo() {
+		return valorPromo;
 	}
 
-	public void setValor_promo(BigDecimal valor_promo) {
-		this.valor_promo = valor_promo;
+	public void setValorPromo(BigDecimal valorPromo) {
+		this.valorPromo = valorPromo;
 	}
 
 	public String getCategoria() {

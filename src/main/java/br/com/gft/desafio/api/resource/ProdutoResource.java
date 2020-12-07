@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,16 +20,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.gft.desafio.api.event.RecursoCriadoEvent;
 import br.com.gft.desafio.api.model.Produto;
 import br.com.gft.desafio.api.repository.ProdutoRepository;
 import br.com.gft.desafio.api.service.ProdutoService;
+import io.swagger.annotations.Api;
 
 @RestController
 @RequestMapping("/api/produtos")
+@Api(tags = "Produto")
 public class ProdutoResource {
 
 	@Autowired
 	private ProdutoRepository produtoRepository;
+	
+	@Autowired
+	private ApplicationEventPublisher publisher;
 	
 	@Autowired
 	private ProdutoService produtoService;
@@ -55,9 +63,12 @@ public class ProdutoResource {
 	@PostMapping
 	public ResponseEntity<Produto> criar(@Valid @RequestBody Produto produto, HttpServletResponse response){
 		
-		produtoRepository.save(produto);
+		Produto produtoSalvo = produtoRepository.save(produto);
+		produtoService.criarProdutoCodigo(produto);
+			
+		publisher.publishEvent(new RecursoCriadoEvent(this, response, produtoSalvo.getId()));
 		
-		return ResponseEntity.status(HttpStatus.CREATED).body(produto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(produtoSalvo);
 	}
 	
 	@GetMapping("/{id}")
@@ -79,7 +90,10 @@ public class ProdutoResource {
 	
 	@DeleteMapping("/{id}")
 	public void deletar(@PathVariable Long id) {
-		
-		produtoRepository.deleteById(id);
+		if(produtoRepository.findById(id).isPresent()) {
+			produtoRepository.deleteById(id);
+		}else {
+			throw new EmptyResultDataAccessException(1);
+		}
 	}
 }
