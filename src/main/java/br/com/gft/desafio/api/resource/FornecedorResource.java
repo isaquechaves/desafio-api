@@ -47,7 +47,7 @@ public class FornecedorResource {
 	public List<Fornecedor> listarFuncionarios(){
 		return fornecedorRepository.findAll();
 	}
-	
+	//teste nova branch
 	@ApiOperation("Lista todos em ordem alfabética")
 	@GetMapping("/asc")
 	public List<Fornecedor> listarAlpha(){
