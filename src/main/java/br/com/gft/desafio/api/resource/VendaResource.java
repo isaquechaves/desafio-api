@@ -26,6 +26,8 @@ import br.com.gft.desafio.api.model.VendaDTO;
 import br.com.gft.desafio.api.repository.VendaRepository;
 import br.com.gft.desafio.api.service.VendaService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @RequestMapping("/api/vendas")
@@ -41,24 +43,29 @@ public class VendaResource {
 	@Autowired
 	private VendaService vendaService;
 	
-	
+	@ApiOperation("Lista todas")
 	@GetMapping
 	public List<Venda> listarTodos(){
 		return vendaRepository.findAll();
 	}
 	
+	@ApiOperation("Lista todos em ordem alfabética")
 	@GetMapping("/asc")
 	public List<Venda> listarTodoAlpha(){
 		return vendaRepository.findAll(Sort.by("id").ascending());
 	}
 	
+	@ApiOperation("Lista todos em ordem alfabética decrescente")
 	@GetMapping("/desc")
 	public List<Venda> listarTodoDesc(){
 		return vendaRepository.findAll(Sort.by("id").descending());
 	}
 	
+	@ApiOperation("Busca uma venda pelo ID")
 	@GetMapping("/{id}")
-	public ResponseEntity<Venda> buscarPorId(@PathVariable Long id, HttpServletResponse response){
+	public ResponseEntity<Venda> buscarPorId(
+			@ApiParam(value = "ID de uma venda", example = "1")
+			@PathVariable Long id, HttpServletResponse response){
 		if(vendaRepository.findById(id).isPresent()) {
 			Venda vendaEncontrada = vendaRepository.findById(id).get();
 			return ResponseEntity.status(HttpStatus.OK).body(vendaEncontrada);
@@ -67,8 +74,11 @@ public class VendaResource {
 		}
 	}
 	
+	@ApiOperation("Cria uma nova venda")
 	@PostMapping
-	public ResponseEntity<Venda> criar(@Valid @RequestBody VendaDTO vendaDTO, HttpServletResponse response){
+	public ResponseEntity<Venda> criar(
+			@ApiParam(name = "corpo", value = "Representa uma nova venda")
+			@Valid @RequestBody VendaDTO vendaDTO, HttpServletResponse response){
 		Venda vendaSalva = vendaService.criar(vendaDTO);
 		
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, vendaSalva.getId()));
@@ -76,15 +86,23 @@ public class VendaResource {
 		return ResponseEntity.status(HttpStatus.CREATED).body(vendaSalva);
 	}
 	
+	@ApiOperation("Atualiza uma venda pelo ID")
 	@PutMapping("/{id}")
-	public ResponseEntity<Venda> atualizar(@PathVariable Long id, @Valid @RequestBody VendaDTO vendaDTO, HttpServletResponse response){
+	public ResponseEntity<Venda> atualizar(
+			@ApiParam(value = "ID de uma venda", example = "1")
+			@PathVariable Long id,
+			@ApiParam(name = "corpo", value = "Representa uma venda com novos dados")
+			@Valid @RequestBody VendaDTO vendaDTO, HttpServletResponse response){
 		Venda vendaAtualizada = vendaService.atualizar(vendaDTO, id);
 		
 		return ResponseEntity.status(HttpStatus.OK).body(vendaAtualizada);
 	}
 	
+	@ApiOperation("Deleta uma venda pelo ID")
 	@DeleteMapping("/{id}")
-	public void remover(@PathVariable Long id) {
+	public void remover(
+			@ApiParam(value = "ID de uma venda", example = "1")
+			@PathVariable Long id) {
 		if(vendaRepository.findById(id).isPresent()) {
 			vendaRepository.deleteById(id);
 		}else {

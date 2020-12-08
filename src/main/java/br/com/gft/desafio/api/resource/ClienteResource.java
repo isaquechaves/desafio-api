@@ -25,6 +25,8 @@ import br.com.gft.desafio.api.model.Cliente;
 import br.com.gft.desafio.api.repository.ClienteRepository;
 import br.com.gft.desafio.api.service.ClienteService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @RequestMapping("/api/clientes")
@@ -40,32 +42,42 @@ public class ClienteResource {
 	@Autowired
 	private ApplicationEventPublisher publisher;
 	
+	@ApiOperation("Lista todos")
 	@GetMapping
 	public List<Cliente> listarTodos(){
 		return clienteRepository.findAll();
 	}
 	
+	@ApiOperation("Lista todos em ordem alfabética")
 	@GetMapping("/asc")
 	public List<Cliente> listarAlpha(){
 		return clienteRepository.findAll(Sort.by("nome").ascending());
 	}
 
+	@ApiOperation("Lista todos em ordem alfabética decrescente")
 	@GetMapping("/desc")
 	public List<Cliente> listarDesc(){
 		return clienteRepository.findAll(Sort.by("nome").descending());
 	}
 	
+	@ApiOperation("Busca cliente pelo nome")
 	@GetMapping("/nome/{nome}")
-	public List<Cliente> buscarPeloNome(@PathVariable String nome){
+	public ResponseEntity<Cliente> buscarPeloNome(
+			@ApiParam(value = "Nome de um cliente", example = "José")
+			@PathVariable String nome){
 		if(!clienteRepository.findByNomeContaining(nome).isEmpty()) {
-			return clienteRepository.findByNomeContaining(nome);
+			Cliente clienteEncontrado = clienteRepository.findByNomeContaining(nome).get(0);
+			return ResponseEntity.status(HttpStatus.OK).body(clienteEncontrado);
 		}else {
-			throw new EmptyResultDataAccessException(1);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
 	
+	@ApiOperation("Cria um novo cliente")
 	@PostMapping
-	public ResponseEntity<Cliente> criar(@Valid @RequestBody Cliente cliente, HttpServletResponse response){
+	public ResponseEntity<Cliente> criar(
+			@ApiParam(name = "corpo", value = "Representa um novo cliente")
+			@Valid @RequestBody Cliente cliente, HttpServletResponse response){
 		Cliente clienteSalvo = clienteRepository.save(cliente);
 		
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, clienteSalvo.getId()));
@@ -73,8 +85,11 @@ public class ClienteResource {
 		return ResponseEntity.status(HttpStatus.CREATED).body(clienteSalvo);
 	}
 	
+	@ApiOperation("Busca um cliente pelo ID")
 	@GetMapping("/{id}")
-	public ResponseEntity<Cliente> buscarPeloId(@PathVariable Long id, HttpServletResponse response){
+	public ResponseEntity<Cliente> buscarPeloId(
+			@ApiParam(value = "ID de um cliente", example = "1")
+			@PathVariable Long id, HttpServletResponse response){
 		if(clienteRepository.findById(id).isPresent()) {
 			Cliente clienteEncontrado = clienteRepository.findById(id).get();
 			return ResponseEntity.status(HttpStatus.OK).body(clienteEncontrado);
@@ -83,15 +98,23 @@ public class ClienteResource {
 		}
 	}
 	
+	@ApiOperation("Atualiza um cliente pelo ID")
 	@PutMapping("/{id}")
-	public ResponseEntity<Cliente> atualizar(@PathVariable Long id, @Valid @RequestBody Cliente cliente){
+	public ResponseEntity<Cliente> atualizar(
+			@ApiParam(value = "ID de um cliente", example = "1")
+			@PathVariable Long id,
+			@ApiParam(name = "corpo", value = "Representa um cliente com novos dados")
+			@Valid @RequestBody Cliente cliente){
 		
 		Cliente clienteSalvo = clienteService.clienteAtualizar(id, cliente);
 		return ResponseEntity.ok(clienteSalvo);
 	}
 	
+	@ApiOperation("Deleta um cliente pelo ID")
 	@DeleteMapping("/{id}")
-	public void deletar(@PathVariable Long id) {
+	public void deletar(
+			@ApiParam(value = "ID de um cliente", example = "1")
+			@PathVariable Long id) {
 		if(clienteRepository.findById(id).isPresent()) {
 			clienteRepository.deleteById(id);
 		}else {

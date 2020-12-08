@@ -93,13 +93,13 @@ public class VendaService {
 			if(produtoRepository.findById(produto.getId()).isPresent()) {
 				
 				Produto produtoEncontrado = produtoRepository.findById(produto.getId()).get();
-				//Valida se todos os produtos são do fornecedor da venda
-				if(produtoEncontrado.getFornecedor().getId() == vendaDTO.getFornecedor().getId()) {
-						produtos.add(produtoEncontrado);
-						produtoService.produtoAtualizarQuantidade(produtoEncontrado);
-				}else {
-					throw new IllegalArgumentException();
-				}
+				//Valida se todos os produtos são do fornecedor da venda	
+					if(produtoEncontrado.getFornecedor().getId() == vendaDTO.getFornecedor().getId() && produtoEncontrado.getQuantidade() > 0) {
+							produtos.add(produtoEncontrado);
+							produtoService.produtoAtualizarQuantidade(produtoEncontrado);
+					}else {
+						throw new IllegalArgumentException();
+					}
 					
 			}else {
 				throw new EmptyResultDataAccessException(1);

@@ -25,6 +25,8 @@ import br.com.gft.desafio.api.model.Fornecedor;
 import br.com.gft.desafio.api.repository.FornecedorRepository;
 import br.com.gft.desafio.api.service.FornecedorService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @RequestMapping("/api/fornecedores")
@@ -40,28 +42,55 @@ public class FornecedorResource {
 	@Autowired
 	private ApplicationEventPublisher publisher;
 	
+	@ApiOperation("Lista todos")
 	@GetMapping
 	public List<Fornecedor> listarFuncionarios(){
 		return fornecedorRepository.findAll();
 	}
 	
+	@ApiOperation("Lista todos em ordem alfabética")
 	@GetMapping("/asc")
 	public List<Fornecedor> listarAlpha(){
 		return fornecedorRepository.findAll(Sort.by("nome").ascending());
 	}
 	
+	@ApiOperation("Lista todos em ordem alfabética decrescente")
 	@GetMapping("/desc")
 	public List<Fornecedor> listarDesc(){
 		return fornecedorRepository.findAll(Sort.by("nome").descending());
 	}
 	
-	@GetMapping("/nome/{nome}")
-	public List<Fornecedor> buscarPeloNome(@PathVariable String nome){
-		return fornecedorRepository.findByNomeContaining(nome);
+	@ApiOperation("Busca fornecedor pelo ID")
+	@GetMapping("/{id}")
+	public ResponseEntity<Fornecedor> fornecedor(
+			@ApiParam(value = "ID de um fornecedor", example = "1")
+			@PathVariable Long id, HttpServletResponse response) {
+		if(fornecedorRepository.findById(id).isPresent()) {
+			Fornecedor fornecedorEncontrado= fornecedorRepository.getOne(id);
+			return ResponseEntity.status(HttpStatus.OK).body(fornecedorEncontrado);
+		}else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 	
+	@ApiOperation("Busca fornecedor pelo nome")
+	@GetMapping("/nome/{nome}")
+	public ResponseEntity<Fornecedor> buscarPeloNome(
+			@ApiParam(value = "Nome de um fornecedor", example = "Fornecedor LTDA.")
+			@PathVariable String nome, HttpServletResponse response){
+		if(!fornecedorRepository.findByNomeContaining(nome).isEmpty()) {
+			Fornecedor fornecedorEncontrado = fornecedorRepository.findByNomeContaining(nome).get(0);
+			return ResponseEntity.status(HttpStatus.OK).body(fornecedorEncontrado);
+		}else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+	}
+	
+	@ApiOperation("Cria um novo fornecedor")
 	@PostMapping
-	public ResponseEntity<Fornecedor> criar(@Valid @RequestBody Fornecedor fornecedor, HttpServletResponse response){
+	public ResponseEntity<Fornecedor> criar(
+			@ApiParam(name = "corpo", value = "Representa um novo fornecedor")
+			@Valid @RequestBody Fornecedor fornecedor, HttpServletResponse response){
 				
 		Fornecedor fornecedorSalvo = fornecedorRepository.save(fornecedor);
 		
@@ -70,15 +99,23 @@ public class FornecedorResource {
 		return ResponseEntity.status(HttpStatus.CREATED).body(fornecedorSalvo);
 	}
 	
+	@ApiOperation("Atualiza um fornecedor pelo ID")
 	@PutMapping("/{id}")
-	public ResponseEntity<Fornecedor> atualizar(@PathVariable Long id, @Valid @RequestBody Fornecedor fornecedor){
+	public ResponseEntity<Fornecedor> atualizar(
+			@ApiParam(value = "ID de um fornecedor", example = "1")
+			@PathVariable Long id, 
+			@ApiParam(name = "corpo", value = "Representa um fornecedor com novos dados")
+			@Valid @RequestBody Fornecedor fornecedor){
 		Fornecedor fornecedorSalvo = fornecedorService.fornecedorAtualizar(id, fornecedor);
 		
 		return ResponseEntity.ok(fornecedorSalvo);
 	}
 	
+	@ApiOperation("Deleta um fornecedor pelo ID")
 	@DeleteMapping("/{id}")
-	public void remover(@PathVariable Long id) {
+	public void remover(
+			@ApiParam(value = "ID de um fornecedor", example = "1")
+			@PathVariable Long id) {
 		if(fornecedorRepository.findById(id).isPresent()) {
 			fornecedorRepository.deleteById(id);
 		}else {

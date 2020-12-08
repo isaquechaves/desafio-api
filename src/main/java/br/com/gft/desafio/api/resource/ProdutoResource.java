@@ -25,6 +25,8 @@ import br.com.gft.desafio.api.model.Produto;
 import br.com.gft.desafio.api.repository.ProdutoRepository;
 import br.com.gft.desafio.api.service.ProdutoService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @RequestMapping("/api/produtos")
@@ -40,28 +42,42 @@ public class ProdutoResource {
 	@Autowired
 	private ProdutoService produtoService;
 	
+	@ApiOperation("Lista todos")
 	@GetMapping
 	public List<Produto> listarTodos(){
 		return produtoRepository.findAll();
 	}
 	
+	@ApiOperation("Lista todos em ordem alfabética")
 	@GetMapping("/asc")
 	public List<Produto> listarAlpha(){
 		return produtoRepository.findAll(Sort.by("nome").ascending());
 	}
 	
+	@ApiOperation("Lista todos em ordem alfabética decrescente")
 	@GetMapping("/desc")
 	public List<Produto> listarDesc(){
 		return produtoRepository.findAll(Sort.by("nome").descending()); 
 	}
 	
+	@ApiOperation("Busca pelo nome do produto")
 	@GetMapping("/nome/{nome}")
-	public List<Produto> buscarPeloNome(@PathVariable String nome){
-		return produtoRepository.findByNomeContaining(nome);	 
+	public ResponseEntity<Produto> buscarPeloNome(
+			@ApiParam(value = "Nome de um produto", example = "Livro")
+			@PathVariable String nome){
+		if(!produtoRepository.findByNomeContaining(nome).isEmpty()) {
+			Produto produtoEncontrado = produtoRepository.findByNomeContaining(nome).get(0);
+			return ResponseEntity.status(HttpStatus.OK).body(produtoEncontrado);
+		}else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 	}
 	
+	@ApiOperation("Cria um novo produto")
 	@PostMapping
-	public ResponseEntity<Produto> criar(@Valid @RequestBody Produto produto, HttpServletResponse response){
+	public ResponseEntity<Produto> criar(
+			@ApiParam(name = "corpo", value = "Representa um novo produto")
+			@Valid @RequestBody Produto produto, HttpServletResponse response){
 		
 		Produto produtoSalvo = produtoRepository.save(produto);
 		produtoService.criarProdutoCodigo(produto);
@@ -71,8 +87,11 @@ public class ProdutoResource {
 		return ResponseEntity.status(HttpStatus.CREATED).body(produtoSalvo);
 	}
 	
+	@ApiOperation("Busca um produto pelo ID")
 	@GetMapping("/{id}")
-	public ResponseEntity<Produto> buscarPorId(@PathVariable Long id, HttpServletResponse response){
+	public ResponseEntity<Produto> buscarPorId(
+			@ApiParam(value = "ID de um produto", example = "1")
+			@PathVariable Long id, HttpServletResponse response){
 		if(produtoRepository.findById(id).isPresent()) {
 			Produto produtoEncontrado = produtoRepository.findById(id).get();
 			return ResponseEntity.status(HttpStatus.OK).body(produtoEncontrado);
@@ -81,15 +100,23 @@ public class ProdutoResource {
 		}
 	}
 	
+	@ApiOperation("Atualiza um produto pelo ID")
 	@PutMapping("/{id}")
-	public ResponseEntity<Produto> atualizar(@PathVariable Long id, @Valid @RequestBody Produto produto) {
+	public ResponseEntity<Produto> atualizar(
+			@ApiParam(value = "ID de um produto", example = "1")
+			@PathVariable Long id,
+			@ApiParam(name = "corpo", value = "Representa um produto com novos dados")
+			@Valid @RequestBody Produto produto) {
 		
 		Produto produtoSalvo = produtoService.produtoAtualizar(id, produto);
 		return ResponseEntity.ok(produtoSalvo);
 	}
 	
+	@ApiOperation("Deleta um produto pelo ID")
 	@DeleteMapping("/{id}")
-	public void deletar(@PathVariable Long id) {
+	public void deletar(
+			@ApiParam(value = "ID de um produto", example = "1")
+			@PathVariable Long id) {
 		if(produtoRepository.findById(id).isPresent()) {
 			produtoRepository.deleteById(id);
 		}else {
