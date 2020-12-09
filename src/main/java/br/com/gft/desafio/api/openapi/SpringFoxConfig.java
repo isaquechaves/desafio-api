@@ -14,15 +14,17 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+
 @Configuration
 @EnableSwagger2
 public class SpringFoxConfig implements WebMvcConfigurer{
 	
+
 	@Bean
 	public Docket apiDocket() {
 		return new Docket(DocumentationType.SWAGGER_2)
 				.select()
-					.apis(RequestHandlerSelectors.basePackage("br.com.gft.desafio.api"))
+					.apis(RequestHandlerSelectors.basePackage("br.com.gft.desafio.api"))			
 					.build()
 				.apiInfo(apiInfo())
 				.tags(new Tag("Cliente", "Gerência os clientes"))

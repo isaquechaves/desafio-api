@@ -25,6 +25,7 @@ import br.com.gft.desafio.api.model.Cliente;
 import br.com.gft.desafio.api.repository.ClienteRepository;
 import br.com.gft.desafio.api.service.ClienteService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
@@ -42,24 +43,28 @@ public class ClienteResource {
 	@Autowired
 	private ApplicationEventPublisher publisher;
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Lista todos")
 	@GetMapping
 	public List<Cliente> listarTodos(){
 		return clienteRepository.findAll();
 	}
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Lista todos em ordem alfabética")
 	@GetMapping("/asc")
 	public List<Cliente> listarAlpha(){
 		return clienteRepository.findAll(Sort.by("nome").ascending());
 	}
 
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Lista todos em ordem alfabética decrescente")
 	@GetMapping("/desc")
 	public List<Cliente> listarDesc(){
 		return clienteRepository.findAll(Sort.by("nome").descending());
 	}
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Busca cliente pelo nome")
 	@GetMapping("/nome/{nome}")
 	public ResponseEntity<Cliente> buscarPeloNome(
@@ -73,6 +78,7 @@ public class ClienteResource {
 		}
 	}
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Cria um novo cliente")
 	@PostMapping
 	public ResponseEntity<Cliente> criar(
@@ -85,6 +91,7 @@ public class ClienteResource {
 		return ResponseEntity.status(HttpStatus.CREATED).body(clienteSalvo);
 	}
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Busca um cliente pelo ID")
 	@GetMapping("/{id}")
 	public ResponseEntity<Cliente> buscarPeloId(
@@ -98,6 +105,7 @@ public class ClienteResource {
 		}
 	}
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Atualiza um cliente pelo ID")
 	@PutMapping("/{id}")
 	public ResponseEntity<Cliente> atualizar(
@@ -110,6 +118,7 @@ public class ClienteResource {
 		return ResponseEntity.ok(clienteSalvo);
 	}
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Deleta um cliente pelo ID")
 	@DeleteMapping("/{id}")
 	public void deletar(

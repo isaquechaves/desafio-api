@@ -47,19 +47,28 @@ public class VendaService {
 		
 		Venda vendaSalva = new Venda();
 		if(vendaRepository.findById(id).isPresent()) {
+			
+			Venda vendaAntiga = vendaRepository.getOne(id);
+			devolveProdutoEstoque(vendaAntiga.getProdutos());
+			
+			
 			vendaSalva.setId(id);
 			vendaSalva.setCliente(vendaDTO.getCliente());
 			vendaSalva.setFornecedor(vendaDTO.getFornecedor());
-			
 			vendaSalva.setDataCompra(vendaDTO.getDataCompra());
-					
 			vendaSalva.setTotalCompra(totalVenda(vendaDTO));
-			
 			vendaSalva.setProdutos(produtosList(vendaDTO));
 			
 			return vendaRepository.save(vendaSalva);
 		}else {
 			throw new EmptyResultDataAccessException(1);
+		}
+	}
+	
+	private void devolveProdutoEstoque(List<Produto> produtos) {
+		for(Produto produto : produtos) {
+			produto.setQuantidade(produto.getQuantidade()+1);
+			produtoRepository.save(produto);
 		}
 	}
 	

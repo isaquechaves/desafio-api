@@ -25,6 +25,7 @@ import br.com.gft.desafio.api.model.Produto;
 import br.com.gft.desafio.api.repository.ProdutoRepository;
 import br.com.gft.desafio.api.service.ProdutoService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
@@ -48,18 +49,21 @@ public class ProdutoResource {
 		return produtoRepository.findAll();
 	}
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Lista todos em ordem alfabética")
 	@GetMapping("/asc")
 	public List<Produto> listarAlpha(){
 		return produtoRepository.findAll(Sort.by("nome").ascending());
 	}
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Lista todos em ordem alfabética decrescente")
 	@GetMapping("/desc")
 	public List<Produto> listarDesc(){
 		return produtoRepository.findAll(Sort.by("nome").descending()); 
 	}
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Busca pelo nome do produto")
 	@GetMapping("/nome/{nome}")
 	public ResponseEntity<Produto> buscarPeloNome(
@@ -73,6 +77,7 @@ public class ProdutoResource {
 		}
 	}
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Cria um novo produto")
 	@PostMapping
 	public ResponseEntity<Produto> criar(
@@ -87,6 +92,7 @@ public class ProdutoResource {
 		return ResponseEntity.status(HttpStatus.CREATED).body(produtoSalvo);
 	}
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Busca um produto pelo ID")
 	@GetMapping("/{id}")
 	public ResponseEntity<Produto> buscarPorId(
@@ -100,6 +106,7 @@ public class ProdutoResource {
 		}
 	}
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Atualiza um produto pelo ID")
 	@PutMapping("/{id}")
 	public ResponseEntity<Produto> atualizar(
@@ -112,6 +119,7 @@ public class ProdutoResource {
 		return ResponseEntity.ok(produtoSalvo);
 	}
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Deleta um produto pelo ID")
 	@DeleteMapping("/{id}")
 	public void deletar(

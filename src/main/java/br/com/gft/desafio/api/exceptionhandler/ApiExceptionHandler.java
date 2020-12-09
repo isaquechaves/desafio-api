@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import br.com.gft.desafio.api.service.exception.FornecedorComVenda;
+
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 
@@ -83,6 +85,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 	@ExceptionHandler({IllegalArgumentException.class})
 	public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request){
 		String mensagemUsuario = messageSource.getMessage("recurso.produto-invalido",null, LocaleContextHolder.getLocale());
+		String mensagemDesenvolvedor = ex.toString();
+		
+		List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
+		
+		return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+	}
+	
+	@ExceptionHandler({FornecedorComVenda.class})
+	public ResponseEntity<Object> handleFornecedorComVenda(FornecedorComVenda ex, WebRequest request){
+		String mensagemUsuario = messageSource.getMessage("fornecedor.com-venda",null, LocaleContextHolder.getLocale());
 		String mensagemDesenvolvedor = ex.toString();
 		
 		List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));

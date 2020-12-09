@@ -8,11 +8,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.br.CNPJ;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -40,6 +43,9 @@ public class Fornecedor {
 	@JoinColumn(name = "fornecedor_id")
 	private List<Produto> produtos;
 
+	@OneToOne
+	@JoinColumn(name = "id")
+	private Venda venda;
 	
 	public Long getId() {
 		return id;
@@ -64,5 +70,14 @@ public class Fornecedor {
 	public void setCnpj(String cnpj) {
 		this.cnpj = cnpj;
 	}
+
+	@JsonIgnore
+	public List<Produto> getProdutos() {
+		return produtos;
+	}
 	
+	@JsonIgnore
+	public Venda getVenda() {
+		return venda;
+	}
 }

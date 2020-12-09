@@ -22,9 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.gft.desafio.api.event.RecursoCriadoEvent;
 import br.com.gft.desafio.api.model.Fornecedor;
+import br.com.gft.desafio.api.model.Produto;
 import br.com.gft.desafio.api.repository.FornecedorRepository;
+import br.com.gft.desafio.api.repository.ProdutoRepository;
 import br.com.gft.desafio.api.service.FornecedorService;
+import br.com.gft.desafio.api.service.exception.FornecedorComVenda;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
@@ -37,29 +41,36 @@ public class FornecedorResource {
 	private FornecedorRepository fornecedorRepository;
 	
 	@Autowired
+	private ProdutoRepository produtoRepository;
+	
+	@Autowired
 	private FornecedorService fornecedorService;
 	
 	@Autowired
 	private ApplicationEventPublisher publisher;
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Lista todos")
 	@GetMapping
 	public List<Fornecedor> listarFuncionarios(){
 		return fornecedorRepository.findAll();
 	}
-	//teste nova branch
+	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Lista todos em ordem alfabética")
 	@GetMapping("/asc")
 	public List<Fornecedor> listarAlpha(){
 		return fornecedorRepository.findAll(Sort.by("nome").ascending());
 	}
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Lista todos em ordem alfabética decrescente")
 	@GetMapping("/desc")
 	public List<Fornecedor> listarDesc(){
 		return fornecedorRepository.findAll(Sort.by("nome").descending());
 	}
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Busca fornecedor pelo ID")
 	@GetMapping("/{id}")
 	public ResponseEntity<Fornecedor> fornecedor(
@@ -73,6 +84,7 @@ public class FornecedorResource {
 		}
 	}
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Busca fornecedor pelo nome")
 	@GetMapping("/nome/{nome}")
 	public ResponseEntity<Fornecedor> buscarPeloNome(
@@ -86,6 +98,7 @@ public class FornecedorResource {
 		}
 	}
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Cria um novo fornecedor")
 	@PostMapping
 	public ResponseEntity<Fornecedor> criar(
@@ -99,6 +112,7 @@ public class FornecedorResource {
 		return ResponseEntity.status(HttpStatus.CREATED).body(fornecedorSalvo);
 	}
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Atualiza um fornecedor pelo ID")
 	@PutMapping("/{id}")
 	public ResponseEntity<Fornecedor> atualizar(
@@ -111,12 +125,21 @@ public class FornecedorResource {
 		return ResponseEntity.ok(fornecedorSalvo);
 	}
 	
+	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Deleta um fornecedor pelo ID")
 	@DeleteMapping("/{id}")
 	public void remover(
 			@ApiParam(value = "ID de um fornecedor", example = "1")
 			@PathVariable Long id) {
 		if(fornecedorRepository.findById(id).isPresent()) {
+			Fornecedor fornecedor = fornecedorRepository.getOne(id);
+			if(fornecedor.getVenda() == null) {	
+				for(Produto produto : fornecedor.getProdutos()) {
+					produtoRepository.deleteById(produto.getId());
+				}
+			}else {
+				throw new FornecedorComVenda();
+			}
 			fornecedorRepository.deleteById(id);
 		}else {
 			throw new EmptyResultDataAccessException(1);
