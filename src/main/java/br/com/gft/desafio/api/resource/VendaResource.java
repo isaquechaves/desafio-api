@@ -102,13 +102,13 @@ public class VendaResource {
 			@Valid @RequestBody VendaDTO vendaDTO, HttpServletResponse response){
 		Venda vendaAtualizada = vendaService.atualizar(vendaDTO, id);
 		
-		return ResponseEntity.status(HttpStatus.OK).body(vendaAtualizada);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(vendaAtualizada);
 	}
 	
 	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Deleta uma venda pelo ID")
 	@DeleteMapping("/{id}")
-	public void remover(
+	public ResponseEntity<Venda> remover(
 			@ApiParam(value = "ID de uma venda", example = "1")
 			@PathVariable Long id) {
 		if(vendaRepository.findById(id).isPresent()) {
@@ -116,5 +116,6 @@ public class VendaResource {
 		}else {
 			throw new EmptyResultDataAccessException(1);
 		}
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

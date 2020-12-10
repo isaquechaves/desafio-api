@@ -87,15 +87,16 @@ public class FornecedorResource {
 	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Busca fornecedor pelo nome")
 	@GetMapping("/nome/{nome}")
-	public ResponseEntity<Fornecedor> buscarPeloNome(
+	public ResponseEntity<Fornecedor> buscarPeloNome(	
 			@ApiParam(value = "Nome de um fornecedor", example = "Fornecedor LTDA.")
-			@PathVariable String nome, HttpServletResponse response){
+			@PathVariable String nome,HttpServletResponse response){
 		if(!fornecedorRepository.findByNomeContaining(nome).isEmpty()) {
 			Fornecedor fornecedorEncontrado = fornecedorRepository.findByNomeContaining(nome).get(0);
 			return ResponseEntity.status(HttpStatus.OK).body(fornecedorEncontrado);
 		}else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+
 	}
 	
 	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
@@ -122,13 +123,13 @@ public class FornecedorResource {
 			@Valid @RequestBody Fornecedor fornecedor){
 		Fornecedor fornecedorSalvo = fornecedorService.fornecedorAtualizar(id, fornecedor);
 		
-		return ResponseEntity.ok(fornecedorSalvo);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(fornecedorSalvo);
 	}
 	
 	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Deleta um fornecedor pelo ID")
 	@DeleteMapping("/{id}")
-	public void remover(
+	public ResponseEntity<Fornecedor> remover(
 			@ApiParam(value = "ID de um fornecedor", example = "1")
 			@PathVariable Long id) {
 		if(fornecedorRepository.findById(id).isPresent()) {
@@ -144,5 +145,6 @@ public class FornecedorResource {
 		}else {
 			throw new EmptyResultDataAccessException(1);
 		}
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

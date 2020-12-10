@@ -116,13 +116,13 @@ public class ProdutoResource {
 			@Valid @RequestBody Produto produto) {
 		
 		Produto produtoSalvo = produtoService.produtoAtualizar(id, produto);
-		return ResponseEntity.ok(produtoSalvo);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(produtoSalvo);
 	}
 	
 	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Deleta um produto pelo ID")
 	@DeleteMapping("/{id}")
-	public void deletar(
+	public ResponseEntity<Produto> deletar(
 			@ApiParam(value = "ID de um produto", example = "1")
 			@PathVariable Long id) {
 		if(produtoRepository.findById(id).isPresent()) {
@@ -130,5 +130,6 @@ public class ProdutoResource {
 		}else {
 			throw new EmptyResultDataAccessException(1);
 		}
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

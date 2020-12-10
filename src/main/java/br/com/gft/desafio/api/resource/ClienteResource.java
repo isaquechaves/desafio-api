@@ -115,13 +115,13 @@ public class ClienteResource {
 			@Valid @RequestBody Cliente cliente){
 		
 		Cliente clienteSalvo = clienteService.clienteAtualizar(id, cliente);
-		return ResponseEntity.ok(clienteSalvo);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(clienteSalvo);
 	}
 	
 	@ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", example = "Bearer access_token")
 	@ApiOperation("Deleta um cliente pelo ID")
 	@DeleteMapping("/{id}")
-	public void deletar(
+	public ResponseEntity<Cliente> deletar(
 			@ApiParam(value = "ID de um cliente", example = "1")
 			@PathVariable Long id) {
 		if(clienteRepository.findById(id).isPresent()) {
@@ -129,5 +129,6 @@ public class ClienteResource {
 		}else {
 			throw new EmptyResultDataAccessException(1);
 		}
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }
