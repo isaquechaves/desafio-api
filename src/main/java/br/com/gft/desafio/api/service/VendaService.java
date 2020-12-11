@@ -14,6 +14,7 @@ import br.com.gft.desafio.api.model.Venda;
 import br.com.gft.desafio.api.model.VendaDTO;
 import br.com.gft.desafio.api.repository.ProdutoRepository;
 import br.com.gft.desafio.api.repository.VendaRepository;
+import br.com.gft.desafio.api.service.exception.VendaProdutosDeOutroFornecedor;
 
 @Service
 public class VendaService {
@@ -107,7 +108,7 @@ public class VendaService {
 							produtos.add(produtoEncontrado);
 							produtoService.produtoAtualizarQuantidade(produtoEncontrado);
 					}else {
-						throw new IllegalArgumentException();
+						throw new VendaProdutosDeOutroFornecedor();
 					}
 					
 			}else {

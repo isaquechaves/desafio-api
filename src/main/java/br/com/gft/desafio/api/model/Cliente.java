@@ -39,9 +39,9 @@ public class Cliente {
 	@Email
 	private String email;
 	
-	@ApiModelProperty(example = "12356")
+	@ApiModelProperty(example = "123")
 	@NotBlank
-	@Size(min = 6, max = 10)
+	@Size(min = 3)
 	private String senha;
 	
 	@ApiModelProperty(example = "xxx.xxx.xxx-xx")

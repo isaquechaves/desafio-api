@@ -23,6 +23,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import br.com.gft.desafio.api.service.exception.FornecedorComVenda;
+import br.com.gft.desafio.api.service.exception.VendaProdutosDeOutroFornecedor;
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
@@ -84,7 +85,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 	
 	@ExceptionHandler({IllegalArgumentException.class})
 	public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request){
-		String mensagemUsuario = messageSource.getMessage("recurso.produto-invalido",null, LocaleContextHolder.getLocale());
+		String mensagemUsuario = messageSource.getMessage("recurso.operacao-nao-permitida",null, LocaleContextHolder.getLocale());
 		String mensagemDesenvolvedor = ex.toString();
 		
 		List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
@@ -95,6 +96,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 	@ExceptionHandler({FornecedorComVenda.class})
 	public ResponseEntity<Object> handleFornecedorComVenda(FornecedorComVenda ex, WebRequest request){
 		String mensagemUsuario = messageSource.getMessage("fornecedor.com-venda",null, LocaleContextHolder.getLocale());
+		String mensagemDesenvolvedor = ex.toString();
+		
+		List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
+		
+		return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+	}
+	
+	@ExceptionHandler({VendaProdutosDeOutroFornecedor.class})
+	public ResponseEntity<Object> handleVendaProdutosDeOutroFornecedor(VendaProdutosDeOutroFornecedor ex, WebRequest request){
+		String mensagemUsuario = messageSource.getMessage("venda.produto-outro-fornecedor",null, LocaleContextHolder.getLocale());
 		String mensagemDesenvolvedor = ex.toString();
 		
 		List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
@@ -125,18 +136,22 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 			this.mensagemDesenvolvedor = mensagemDesenvolvedor;
 		}
 
+		@SuppressWarnings("unused")
 		public String getMensagemUsuario() {
 			return mensagemUsuario;
 		}
 
+		@SuppressWarnings("unused")
 		public String getMensagemDesenvolvedor() {
 			return mensagemDesenvolvedor;
 		}
 
+		@SuppressWarnings("unused")
 		public void setMensagemUsuario(String mensagemUsuario) {
 			this.mensagemUsuario = mensagemUsuario;
 		}
 
+		@SuppressWarnings("unused")
 		public void setMensagemDesenvolvedor(String mensagemDesenvolvedor) {
 			this.mensagemDesenvolvedor = mensagemDesenvolvedor;
 		}
